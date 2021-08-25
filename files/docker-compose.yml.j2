@@ -1,0 +1,51 @@
+version: "3.4"
+x-defaults: &defaults
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "{{ gas_docker_DCCT_logging_max_size }}"
+      max-file: "{{ gas_docker_DCCT_logging_max_file }}"
+  networks:
+    - hostnet
+
+x-deploy: &deploy
+  replicas: 1
+  restart_policy:
+    condition: any
+
+networks:
+  hostnet:
+    external:
+      name: "host"
+
+services:
+  {{ item.DMM7510_CONTAINER_NAME }}:
+    <<: *defaults
+    image: {{ item.DMM7510_IMAGE_BASE }}:{{ item.DMM7510_IMAGE_TAG }}
+    container_name: {{ item.DMM7510_CONTAINER_NAME }}-{{ item.DMM7510_INSTANCE }}
+    command: [
+        '-t', '{{ item.DMM7510_TELNET_PORT }}',
+        '-i', '{{ item.DMM7510_IP }}',
+        '-p', '{{ item.DMM7510_PORT }}',
+        '-d', '{{ item.DMM7510_INSTANCE }}',
+        '-P', '{{ item.DMM7510_AREA_PREFIX }}',
+        '-R', '{{ item.DMM7510_DEVICE_PREFIX }}',
+        '-l', '{{ item.DMM7510_LOGGING_SERVER_HOST }}',
+        '-L', '{{ item.DMM7510_LOGGING_SERVER_PORT }}'
+    ]
+    volumes:
+      - type: bind
+        source: {{ item.DMM7510_AUTOSAVE_DIR }}
+        target: {{ item.DMM7510_AUTOSAVE_CONTAINER_DIR }}
+
+    deploy:
+      <<: *deploy
+{% if item.DMM7510_PLACEMENT is defined %}
+      placement:
+  {% if item.DMM7510_PLACEMENT.CONSTRAINTS is defined and item.DMM7510_PLACEMENT.CONSTRAINTS | length %}
+      constraints:
+    {% for item in item.DMM7510_PLACEMENT.CONSTRAINTS %}
+      - {{ item }}
+    {% endfor %}
+  {% endif %}
+{% endif %}
