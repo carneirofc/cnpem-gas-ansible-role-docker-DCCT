@@ -42,10 +42,10 @@ services:
       <<: *deploy
 {% if item.DMM7510_PLACEMENT is defined %}
       placement:
-  {% if item.DMM7510_PLACEMENT.CONSTRAINTS is defined and item.DMM7510_PLACEMENT.CONSTRAINTS | length %}
+{%   if item.DMM7510_PLACEMENT.CONSTRAINTS is defined and item.DMM7510_PLACEMENT.CONSTRAINTS | length %}
       constraints:
-    {% for item in item.DMM7510_PLACEMENT.CONSTRAINTS %}
+{%     for item in item.DMM7510_PLACEMENT.CONSTRAINTS %}
       - {{ item }}
-    {% endfor %}
-  {% endif %}
+{%     endfor %}
+{%   endif %}
 {% endif %}
