@@ -11,3 +11,11 @@
     dest: "{{ gas_docker_DCCT_base_template_dir }}/{{ item.STACK_NAME }}/docker-compose.yml"
     mode: 0644
   with_items: "{{ gas_docker_DCCT_settings }}"
+  
+# - name: Deploy stack from a compose file
+#  community.docker.docker_stack:
+#    state: present
+#    name: "{{ item.STACK_NAME }}"
+#    compose:
+#      - "{{ gas_docker_DCCT_base_template_dir }}/{{ item.STACK_NAME }}/docker-compose.yml"
+#  with_items: "{{ gas_docker_DCCT_settings }}"
